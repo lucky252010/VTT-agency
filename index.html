@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VTT Travel Services — Your Journey Begins Here</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Mulish:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+
+/* ============================================================
+   CSS TOKENS
+============================================================ */
+:root{
+  --rust:     #b84e1e;
+  --rust2:    #d06030;
+  --amber:    #d98c28;
+  --gold:     #ecb84a;
+  --bisque:   #f5e2c4;
+  --linen:    #faf2e3;
+  --cream:    #fdf8f0;
+  --espresso: #2c1200;
+  --coffee:   #5c2d0a;
+  --muted:    #8a5e3c;
+  --hairline: #e5cba8;
+
+  --serif:  'Playfair Display', Georgia, serif;
+  --sans:   'Mulish', sans-serif;
+  --px:     clamp(18px, 5.5vw, 78px);
+  --py:     clamp(68px, 8.5vw, 118px);
+}
+
+/* ============================================================
+   RESET / BASE
+============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--sans);background:var(--cream);color:var(--espresso);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+img{display:block;width:100%;height:100%;object-fit:cover}
+
+/* ============================================================
+   SCROLL REVEAL
+============================================================ */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .72s ease,transform .72s ease}
+.rv.on{opacity:1;transform:none}
+.rv.d1{transition-delay:.10s}
+.rv.d2{transition-delay:.20s}
+.rv.d3{transition-delay:.30s}
+.rv.d4{transition-delay:.40s}
+
+/* ============================================================
+   SHARED ATOMS
+============================================================ */
+.chip{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:10.5px;font-weight:600;letter-spacing:3.5px;
+  text-transform:uppercase;color:var(--rust)
+}
+.chip::before{content:'';width:28px;height:1.5px;background:var(--rust);flex-shrink:0}
+
+.h2{
+  font-family:var(--serif);
+  font-size:clamp(36px,4.8vw,66px);
+  font-weight:600;line-height:1.07;color:var(--espresso)
+}
+.h2 i{font-style:italic;color:var(--rust);font-weight:400}
+
+/* ============================================================
+   NAVBAR
+============================================================ */
+#nav{
+  position:fixed;inset:0 0 auto 0;z-index:600;
+  height:66px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 var(--px);
+  background:rgba(253,248,240,.92);
+  backdrop-filter:blur(16px) saturate(1.5);
+  border-bottom:1px solid transparent;
+  transition:border-color .3s,box-shadow .3s
+}
+#nav.scrolled{border-color:var(--hairline);box-shadow:0 3px 18px rgba(44,18,0,.07)}
+
+.brand{font-family:var(--serif);font-size:26px;font-weight:800;letter-spacing:4px;color:var(--espresso)}
+.brand span{color:var(--rust)}
+
+.navlinks{display:flex;gap:26px;list-style:none;align-items:center}
+.navlinks a{
+  font-size:11.5px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;
+  color:var(--coffee);position:relative;transition:color .25s
+}
+.navlinks a::after{content:'';position:absolute;left:0;bottom:-4px;width:0;height:1.5px;background:var(--rust);transition:width .3s}
+.navlinks a:hover{color:var(--rust)}
+.navlinks a:hover::after{width:100%}
+
+.nav-cta{
+  background:var(--rust);color:#fff;
+  padding:9px 22px;font-size:11px;font-weight:700;
+  letter-spacing:1.6px;text-transform:uppercase;border-radius:2px;
+  transition:background .25s,transform .2s
+}
+.nav-cta:hover{background:var(--coffee);transform:translateY(-1px)}
+
+/* Hamburger */
+.ham{display:none;flex-direction:column;gap:5px;cursor:pointer;border:none;background:none;padding:4px}
+.ham s{display:block;width:22px;height:2px;background:var(--espresso);border-radius:2px;transition:all .3s;font-style:normal}
+.ham.open s:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.ham.open s:nth-child(2){opacity:0}
+.ham.open s:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+#drawer{
+  display:none;position:fixed;top:66px;left:0;right:0;bottom:0;
+  background:var(--cream);z-index:599;
+  flex-direction:column;align-items:center;justify-content:center;gap:30px
+}
+#drawer.open{display:flex}
+#drawer a{font-family:var(--serif);font-size:28px;font-weight:600;color:var(--espresso);transition:color .2s}
+#drawer a:hover{color:var(--rust)}
+
+/* ============================================================
+   HERO
+============================================================ */
+#hero{
+  min-height:100vh;
+  display:flex;align-items:center;
+  padding:106px var(--px) 60px;
+  background:var(--bisque);
+  position:relative;overflow:hidden
+}
+
+/* decorative layers */
+.hero-glow{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 75% 60% at 90% 38%,rgba(180,78,30,.17) 0%,transparent 64%),
+    radial-gradient(ellipse 45% 55% at 4% 88%,rgba(236,184,74,.13) 0%,transparent 58%)
+}
+.hero-grid{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(184,78,30,.055) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(184,78,30,.055) 1px,transparent 1px);
+  background-size:70px 70px
+}
+.hero-ring{
+  position:absolute;right:-160px;top:50%;transform:translateY(-50%);
+  width:620px;height:620px;border-radius:50%;
+  border:1px solid rgba(184,78,30,.10);pointer-events:none
+}
+.hero-ring::before,.hero-ring::after{content:'';position:absolute;border-radius:50%;border:1px solid rgba(184,78,30,.065)}
+.hero-ring::before{inset:52px}
+.hero-ring::after{inset:115px}
+
+.hero-in{position:relative;z-index:1;max-width:860px}
+
+.hl-tag{
+  display:inline-flex;align-items:center;gap:12px;
+  font-size:11px;font-weight:600;letter-spacing:3.5px;text-transform:uppercase;
+  color:var(--rust);margin-bottom:22px;
+  opacity:0;animation:up .8s .28s forwards
+}
+.hl-tag::before{content:'';width:36px;height:1.5px;background:var(--rust)}
+
+.hero-h1{
+  font-family:var(--serif);
+  font-size:clamp(56px,9.2vw,122px);
+  font-weight:800;line-height:.93;letter-spacing:-1.5px;color:var(--espresso);
+  opacity:0;animation:up .9s .46s forwards
+}
+.hero-h1 span{display:block}
+.hero-h1 em{font-style:italic;color:var(--rust);font-weight:400}
+
+.hero-sub{
+  max-width:500px;margin-top:26px;
+  font-size:clamp(15px,1.85vw,18px);font-weight:300;line-height:1.80;color:var(--muted);
+  opacity:0;animation:up .9s .64s forwards
+}
+
+.hero-btns{
+  display:flex;gap:13px;flex-wrap:wrap;margin-top:40px;
+  opacity:0;animation:up .9s .82s forwards
+}
+.btn-fill{
+  background:var(--rust);color:#fff;
+  padding:15px 36px;font-size:11.5px;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;border-radius:2px;
+  border:2px solid var(--rust);display:inline-block;transition:all .28s
+}
+.btn-fill:hover{background:var(--coffee);border-color:var(--coffee);transform:translateY(-2px)}
+.btn-out{
+  background:transparent;color:var(--espresso);
+  padding:15px 36px;font-size:11.5px;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;border-radius:2px;
+  border:2px solid var(--espresso);display:inline-block;transition:all .28s
+}
+.btn-out:hover{border-color:var(--rust);color:var(--rust);transform:translateY(-2px)}
+
+.hero-stats{
+  display:flex;gap:clamp(24px,4vw,56px);flex-wrap:wrap;
+  margin-top:58px;padding-top:36px;border-top:1px solid var(--hairline);
+  opacity:0;animation:up .9s 1.02s forwards
+}
+.sv{font-family:var(--serif);font-size:46px;font-weight:800;color:var(--espresso);line-height:1}
+.sv sup{font-size:20px;color:var(--rust);vertical-align:super;font-weight:600}
+.sl{margin-top:5px;font-size:10.5px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+
+@keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+
+/* ============================================================
+   SERVICES
+============================================================ */
+#services{padding:var(--py) var(--px);background:var(--cream)}
+
+.svc-top{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  flex-wrap:wrap;gap:22px;margin-bottom:50px
+}
+.svc-blurb{max-width:360px;font-size:15px;font-weight:300;line-height:1.78;color:var(--muted)}
+
+.svc-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(256px,1fr));
+  gap:2px;background:var(--hairline);
+  border:2px solid var(--hairline);border-radius:3px;overflow:hidden
+}
+.svc-card{
+  background:var(--cream);padding:32px 28px 28px;
+  position:relative;overflow:hidden;transition:background .3s
+}
+.svc-card::after{
+  content:'';position:absolute;bottom:0;left:0;
+  height:3px;width:0;
+  background:linear-gradient(90deg,var(--rust),var(--amber));
+  transition:width .42s ease
+}
+.svc-card:hover{background:var(--linen)}
+.svc-card:hover::after{width:100%}
+.svc-card:hover .svc-more{letter-spacing:3px}
+
+.svc-ico{font-size:32px;margin-bottom:14px;display:block}
+.svc-name{font-family:var(--serif);font-size:21px;font-weight:700;color:var(--espresso);margin-bottom:9px}
+.svc-txt{font-size:13.5px;font-weight:300;color:var(--muted);line-height:1.66}
+.svc-more{display:inline-block;margin-top:16px;font-size:10.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--rust);transition:letter-spacing .25s}
+
+/* ============================================================
+   GALLERY
+============================================================ */
+#gallery{padding:var(--py) var(--px);background:var(--linen)}
+.gal-hd{text-align:center;margin-bottom:48px}
+.gal-hd .chip{justify-content:center}
+
+.mosaic{
+  display:grid;grid-template-columns:repeat(12,1fr);
+  grid-auto-rows:182px;gap:10px;
+  max-width:1220px;margin:0 auto
+}
+.mi{position:relative;overflow:hidden;border-radius:3px;cursor:pointer}
+.mi:nth-child(1){grid-column:span 5;grid-row:span 2}
+.mi:nth-child(2){grid-column:span 4}
+.mi:nth-child(3){grid-column:span 3}
+.mi:nth-child(4){grid-column:span 3}
+.mi:nth-child(5){grid-column:span 4}
+.mi:nth-child(6){grid-column:span 4}
+.mi:nth-child(7){grid-column:span 4}
+.mi:nth-child(8){grid-column:span 4}
+
+.mi-bg{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;transition:transform .55s ease}
+.mi:hover .mi-bg{transform:scale(1.07)}
+.r1{background:linear-gradient(148deg,#7c2a0c 0%,#b84a24 55%,#d06830 100%)}
+.r2{background:linear-gradient(148deg,#581c08 0%,#922e18 100%)}
+.r3{background:linear-gradient(148deg,#6a2c10 0%,#9e4a1c 100%)}
+.r4{background:linear-gradient(148deg,#a45220 0%,#c87034 100%)}
+.r5{background:linear-gradient(148deg,#381408 0%,#742814 100%)}
+.r6{background:linear-gradient(148deg,#843416 0%,#aa5222 100%)}
+.r7{background:linear-gradient(148deg,#9e401c 0%,#ce7028 100%)}
+.r8{background:linear-gradient(148deg,#4a1808 0%,#84301a 100%)}
+.mi-ico{font-size:36px}
+.mi-lbl{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.87);font-weight:600;text-align:center;padding:0 8px}
+.mi-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(44,18,0,.72) 0%,transparent 56%);opacity:0;transition:opacity .32s;display:flex;align-items:flex-end;padding:15px 18px}
+.mi:hover .mi-ov{opacity:1}
+.mi-cap{color:#fff;font-size:11.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase}
+
+/* ============================================================
+   WHY VTT (dark band)
+============================================================ */
+#why{padding:var(--py) var(--px);background:var(--espresso)}
+#why .chip{color:var(--gold)}
+#why .chip::before{background:var(--gold)}
+#why .h2{color:#fff}
+#why .h2 i{color:var(--gold)}
+
+.why-wrap{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,108px);align-items:center;margin-top:50px}
+.why-body{font-size:clamp(15px,1.5vw,17px);font-weight:300;color:rgba(255,255,255,.57);line-height:1.88}
+.why-pull{font-family:var(--serif);font-size:clamp(19px,2.3vw,28px);font-style:italic;font-weight:400;color:var(--gold);line-height:1.46;margin-top:26px}
+
+.pillars{display:flex;flex-direction:column}
+.pill{display:flex;gap:18px;align-items:flex-start;padding:22px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.pill:first-child{padding-top:0}
+.pill:last-child{border-bottom:none;padding-bottom:0}
+.pn{font-family:var(--serif);font-size:40px;font-weight:800;color:var(--rust2);line-height:1;min-width:44px}
+.pt{font-size:15px;font-weight:600;color:#fff;margin-bottom:4px}
+.pd{font-size:13px;font-weight:300;color:rgba(255,255,255,.43);line-height:1.66}
+
+/* ============================================================
+   OFFICE SECTION
+============================================================ */
+#office{padding:var(--py) var(--px);background:var(--bisque)}
+.office-hd{text-align:center;margin-bottom:50px}
+.office-hd .chip{justify-content:center}
+
+.office-cards{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));
+  gap:20px;max-width:1110px;margin:0 auto
+}
+
+.oc{
+  background:var(--cream);
+  border:1px solid var(--hairline);
+  border-top:4px solid var(--rust);
+  border-radius:3px;padding:36px 32px;
+  transition:transform .3s,box-shadow .3s
+}
+.oc:nth-child(2){border-top-color:var(--amber)}
+.oc:nth-child(3){border-top-color:var(--gold)}
+.oc:hover{transform:translateY(-5px);box-shadow:0 14px 42px rgba(44,18,0,.12)}
+
+.oc-ico{font-size:36px;margin-bottom:16px}
+.oc-badge{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--rust);margin-bottom:6px}
+.oc:nth-child(2) .oc-badge{color:var(--amber)}
+.oc:nth-child(3) .oc-badge{color:var(--muted)}
+.oc-ttl{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--espresso);margin-bottom:16px}
+
+.or{display:flex;align-items:flex-start;gap:10px;font-size:14.5px;color:var(--coffee);line-height:1.5;padding:9px 0;border-bottom:1px solid var(--hairline)}
+.or:last-of-type{border-bottom:none}
+.or a{color:var(--coffee);transition:color .2s}
+.or a:hover{color:var(--rust)}
+.or-i{flex-shrink:0;font-size:15px;margin-top:1px}
+.oc-note{margin-top:14px;font-size:12px;color:var(--muted);font-weight:300;line-height:1.6}
+
+/* ============================================================
+   CONTACT
+============================================================ */
+#contact{padding:var(--py) var(--px);background:var(--cream)}
+
+.ct-wrap{display:grid;grid-template-columns:1fr 1.4fr;gap:clamp(38px,6vw,98px);align-items:start;margin-top:50px}
+
+.ct-info{display:flex;flex-direction:column;gap:26px}
+.ct-row{display:flex;gap:14px;align-items:flex-start}
+.ct-box{width:44px;height:44px;flex-shrink:0;background:var(--linen);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.ct-lbl{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--rust);margin-bottom:4px}
+.ct-val{font-size:14.5px;color:var(--espresso);line-height:1.56}
+.ct-val a{color:var(--espresso);transition:color .2s}
+.ct-val a:hover{color:var(--rust)}
+
+.ct-form{display:flex;flex-direction:column;gap:15px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fg{display:flex;flex-direction:column;gap:6px}
+.fg label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.fg input,.fg select,.fg textarea{
+  background:var(--linen);border:1.5px solid var(--hairline);
+  padding:13px 14px;font-family:var(--sans);
+  font-size:14px;color:var(--espresso);outline:none;
+  border-radius:2px;transition:border-color .25s,background .25s;
+  -webkit-appearance:none;appearance:none;resize:none
+}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--rust);background:var(--bisque)}
+.fg input::placeholder,.fg textarea::placeholder{color:#c4a898}
+.f-btn{
+  background:var(--rust);color:#fff;
+  padding:15px 38px;font-family:var(--sans);
+  font-size:11.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  border:2px solid var(--rust);border-radius:2px;cursor:pointer;
+  align-self:flex-start;transition:all .28s
+}
+.f-btn:hover{background:var(--coffee);border-color:var(--coffee);transform:translateY(-2px)}
+
+/* ============================================================
+   FOOTER
+============================================================ */
+footer{
+  background:var(--espresso);
+  padding:38px var(--px);
+  display:flex;flex-wrap:wrap;
+  justify-content:space-between;align-items:center;gap:18px
+}
+.ft-brand{font-family:var(--serif);font-size:23px;font-weight:800;letter-spacing:4px;color:#fff}
+.ft-brand span{color:var(--gold)}
+.ft-copy{font-size:12px;color:rgba(255,255,255,.30);font-weight:300}
+.ft-nav{display:flex;gap:22px;flex-wrap:wrap}
+.ft-nav a{font-size:10.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.38);transition:color .2s}
+.ft-nav a:hover{color:var(--gold)}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media(max-width:920px){
+  .navlinks,.nav-cta{display:none}
+  .ham{display:flex}
+  .why-wrap{grid-template-columns:1fr}
+  .ct-wrap{grid-template-columns:1fr}
+  .mosaic{grid-template-columns:1fr 1fr;grid-auto-rows:155px}
+  .mi{grid-column:span 1!important;grid-row:span 1!important}
+}
+@media(max-width:560px){
+  .hero-btns{flex-direction:column}
+  .btn-fill,.btn-out{text-align:center}
+  .frow{grid-template-columns:1fr}
+  .mosaic{grid-template-columns:1fr}
+  .svc-top{flex-direction:column;align-items:flex-start}
+  footer{flex-direction:column;text-align:center}
+  .ft-nav{justify-content:center}
+}
+
+  </style>
+</head>
+<body>
+
+<!-- ════ NAVBAR ════ -->
+<header id="nav">
+  <a href="#hero" class="brand">VT<span>T</span></a>
+  <ul class="navlinks">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#why">Why Us</a></li>
+    <li><a href="#office">Our Office</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Book Now</a>
+  <button class="ham" id="ham" aria-label="Menu">
+    <s></s><s></s><s></s>
+  </button>
+</header>
+
+<nav id="drawer">
+  <a href="#services" class="dl">Services</a>
+  <a href="#gallery"  class="dl">Gallery</a>
+  <a href="#why"      class="dl">Why Us</a>
+  <a href="#office"   class="dl">Our Office</a>
+  <a href="#contact"  class="dl">Contact</a>
+  <a href="#contact"  class="btn-fill dl" style="font-size:12px;">Book Now</a>
+</nav>
+
+
+<!-- ════ HERO ════ -->
+<section id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-ring"></div>
+
+  <div class="hero-in">
+    <div class="hl-tag">Your Trusted Travel Partner Since 2012</div>
+
+    <h1 class="hero-h1">
+      <span>Where Every</span>
+      <span>Trip Becomes</span>
+      <span><em>a Memory.</em></span>
+    </h1>
+
+    <p class="hero-sub">
+      VTT handles every detail of your journey — flights, hotels, visas, packages and more — so all you have to do is enjoy the ride.
+    </p>
+
+    <div class="hero-btns">
+      <a href="#services" class="btn-fill">Explore Services</a>
+      <a href="#contact"  class="btn-out">Get a Free Quote</a>
+    </div>
+
+    <div class="hero-stats">
+      <div>
+        <div class="sv">12<sup>K+</sup></div>
+        <div class="sl">Happy Travellers</div>
+      </div>
+      <div>
+        <div class="sv">9<sup>+</sup></div>
+        <div class="sl">Services</div>
+      </div>
+      <div>
+        <div class="sv">50<sup>+</sup></div>
+        <div class="sl">Destinations</div>
+      </div>
+      <div>
+        <div class="sv">13<sup>+</sup></div>
+        <div class="sl">Years of Experience</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════ SERVICES ════ -->
+<section id="services">
+  <div class="svc-top rv">
+    <div>
+      <div class="chip">What We Offer</div>
+      <h2 class="h2" style="margin-top:12px">Every Journey,<br><i>Every Need</i></h2>
+    </div>
+    <p class="svc-blurb">From a single ticket to a full holiday package — VTT is your one-stop travel solution handled by experts who truly care.</p>
+  </div>
+
+  <div class="svc-grid rv d1">
+    <div class="svc-card"><span class="svc-ico">✈️</span><div class="svc-name">Flight Tickets</div><div class="svc-txt">Domestic &amp; international flights at the best fares — economy, business &amp; first class with instant confirmation.</div><a href="#contact" class="svc-more" data-service="Flight Tickets">Enquire →</a></div>
+    <div class="svc-card"><span class="svc-ico">🏨</span><div class="svc-name">Hotel Bookings</div><div class="svc-txt">Handpicked stays from budget guesthouses to 5-star luxury resorts, curated for every preference.</div><a href="#contact" class="svc-more" data-service="Hotel Bookings">Enquire →</a></div>
+    <div class="svc-card"><span class="svc-ico">📋</span><div class="svc-name">Passport Services</div><div class="svc-txt">New applications, renewals and Tatkal — we manage all paperwork swiftly and accurately on your behalf.</div><a href="#contact" class="svc-more" data-service="Passport Services">Enquire →</a></div>
+    <div class="svc-card"><span class="svc-ico">🚌</span><div class="svc-name">Bus Tickets</div><div class="svc-txt">Intercity and interstate bus bookings with real-time seat availability and instant e-ticket delivery.</div><a href="#contact" class="svc-more" data-service="Bus Tickets">Enquire →</a></div>
+    <div class="svc-card"><span class="svc-ico">🚆</span><div class="svc-name">Train Tickets</div><div class="svc-txt">IRCTC reservations across all classes — Sleeper, 3AC, 2AC &amp; 1AC. Tatkal bookings available daily.</div><a href="#contact" class="svc-more" data-service="Train Tickets">Enquire →</a></div>
+    <div class="svc-card"><span class="svc-ico">🛂</span><div class="svc-name">Visa Services</div><div class="svc-txt">Tourist, business &amp; student visas — expert guidance on documentation, submission &amp; real-time tracking.</div><a href="#contact" class="svc-more" data-service="Visa Services">Enquire →</a></div>
+    <div class="svc-card"><span class="svc-ico">🛡️</span><div class="svc-name">Travel Insurance</div><div class="svc-txt">Comprehensive cover for medical emergencies, cancellations, delays and lost baggage — travel stress-free.</div><a href="#contact" class="svc-more" data-service="Travel Insurance">Enquire →</a></div>
+    <div class="svc-card"><span class="svc-ico">🌴</span><div class="svc-name">Holiday Packages</div><div class="svc-txt">All-inclusive customised tours — flights, hotels, sightseeing and guided experiences in one perfect deal.</div><a href="#contact" class="svc-more" data-service="Holiday Package Tours">Enquire →</a></div>
+    <div class="svc-card"><span class="svc-ico">🚗</span><div class="svc-name">Bus &amp; Car Rentals</div><div class="svc-txt">Self-drive and chauffeur-driven cars, tempo travellers &amp; coaches for tours, events and corporate trips.</div><a href="#contact" class="svc-more" data-service="Bus &amp; Car Rentals">Enquire →</a></div>
+  </div>
+</section>
+
+
+<!-- ════ GALLERY ════ -->
+<section id="gallery">
+  <div class="gal-hd rv">
+    <div class="chip">Travel Stories</div>
+    <h2 class="h2" style="margin-top:12px">Destinations <i>We Love</i></h2>
+  </div>
+
+  <div class="mosaic rv d1">
+    <div class="mi"><div class="mi-bg r1"><span class="mi-ico">🏔️</span><span class="mi-lbl">Hill Stations</span></div><div class="mi-ov"><span class="mi-cap">Mountain Escapes</span></div></div>
+    <div class="mi"><div class="mi-bg r2"><span class="mi-ico">🕌</span><span class="mi-lbl">Heritage Tours</span></div><div class="mi-ov"><span class="mi-cap">Heritage &amp; Culture</span></div></div>
+    <div class="mi"><div class="mi-bg r3"><span class="mi-ico">🌿</span><span class="mi-lbl">Nature Retreats</span></div><div class="mi-ov"><span class="mi-cap">Nature Retreats</span></div></div>
+    <div class="mi"><div class="mi-bg r4"><span class="mi-ico">🏖️</span><span class="mi-lbl">Beach Getaways</span></div><div class="mi-ov"><span class="mi-cap">Beach Getaways</span></div></div>
+    <div class="mi"><div class="mi-bg r5"><span class="mi-ico">🗼</span><span class="mi-lbl">International</span></div><div class="mi-ov"><span class="mi-cap">International Tours</span></div></div>
+    <div class="mi"><div class="mi-bg r6"><span class="mi-ico">✈️</span><span class="mi-lbl">Air Travel</span></div><div class="mi-ov"><span class="mi-cap">Flight Packages</span></div></div>
+    <div class="mi"><div class="mi-bg r7"><span class="mi-ico">🚢</span><span class="mi-lbl">Cruise Tours</span></div><div class="mi-ov"><span class="mi-cap">Cruise Adventures</span></div></div>
+    <div class="mi"><div class="mi-bg r8"><span class="mi-ico">🌅</span><span class="mi-lbl">Weekend Breaks</span></div><div class="mi-ov"><span class="mi-cap">Weekend Breaks</span></div></div>
+  </div>
+</section>
+
+
+<!-- ════ WHY VTT ════ -->
+<section id="why">
+  <div class="rv">
+    <div class="chip">Why Choose VTT</div>
+    <h2 class="h2" style="margin-top:12px">Trusted by Thousands of<br><i>Happy Travellers</i></h2>
+  </div>
+  <div class="why-wrap">
+    <div class="rv d1">
+      <p class="why-body">At VTT, travel is more than bookings — it's about crafting experiences that stay with you forever. With 13+ years of expertise and a dedicated team, every trip is planned with precision, care and a personal touch you won't find elsewhere.</p>
+      <p class="why-pull">"Your journey is our commitment — we go above and beyond, every single time."</p>
+    </div>
+    <div class="pillars rv d2">
+      <div class="pill"><div class="pn">01</div><div><div class="pt">Expert Travel Consultants</div><div class="pd">Personalised guidance tailored to your budget, timeline and travel dreams — no generic packages.</div></div></div>
+      <div class="pill"><div class="pn">02</div><div><div class="pt">Best Price Guarantee</div><div class="pd">We compare across hundreds of sources to ensure the best value for every rupee you spend.</div></div></div>
+      <div class="pill"><div class="pn">03</div><div><div class="pt">7 Days a Week Support</div><div class="pd">We're open every day 9:30 AM to 8:30 PM — our team is always a call or WhatsApp away.</div></div></div>
+      <div class="pill"><div class="pn">04</div><div><div class="pt">End-to-End Assistance</div><div class="pd">Visas, insurance, transfers, check-ins — we handle every detail from first booking to safe return.</div></div></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════ OFFICE ════ -->
+<section id="office">
+  <div class="office-hd rv">
+    <div class="chip">Find Us</div>
+    <h2 class="h2" style="margin-top:12px">Visit Our <i>Office</i></h2>
+  </div>
+
+  <div class="office-cards">
+
+    <!-- Address -->
+    <div class="oc rv d1">
+      <div class="oc-ico">📍</div>
+      <div class="oc-badge">Office Address</div>
+      <div class="oc-ttl">VTT Travel Services</div>
+      <div class="or"><span class="or-i">🏢</span>EWS-33, TSIIC Colony, Kamala Nagar</div>
+      <div class="or"><span class="or-i">📌</span>Soorya Hospital Line, ECIL</div>
+      <div class="or"><span class="or-i">🗺️</span>Hyderabad – 500062, Telangana</div>
+      <div class="or"><span class="or-i">🕐</span>Mon – Sun: 9:30 AM – 8:30 PM</div>
+      <div class="oc-note">Open all 7 days a week — walk in anytime during working hours, no appointment needed.</div>
+    </div>
+
+    <!-- Phone -->
+    <div class="oc rv d2">
+      <div class="oc-ico">📞</div>
+      <div class="oc-badge">Call Us</div>
+      <div class="oc-ttl">Mobile Numbers</div>
+      <div class="or"><span class="or-i">📱</span><a href="tel:+919505888004">+91 95058 88004</a></div>
+      <div class="or"><span class="or-i">📱</span><a href="tel:+919505888005">+91 95058 88005</a></div>
+      <div class="or"><span class="or-i">💬</span>WhatsApp available on both numbers</div>
+      <div class="or"><span class="or-i">🕐</span>Available: 9:30 AM – 8:30 PM, Daily</div>
+      <div class="oc-note">Call or WhatsApp us any day of the week. Queries answered within 30 minutes.</div>
+    </div>
+
+    <!-- Email -->
+    <div class="oc rv d3">
+      <div class="oc-ico">✉️</div>
+      <div class="oc-badge">Gmail / Email</div>
+      <div class="oc-ttl">Write to Us</div>
+      <div class="or"><span class="or-i">📧</span><a href="mailto:veeranjaneyulutt@gmail.com">veeranjaneyulutt@gmail.com</a></div>
+      <div class="or"><span class="or-i">⏱️</span>Reply within 2 – 4 business hours</div>
+      <div class="or"><span class="or-i">📝</span>Mention travel dates &amp; destination</div>
+      <div class="oc-note">Email us your trip details for a personalised quote and complete itinerary.</div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ════ CONTACT ════ -->
+<section id="contact">
+  <div class="rv">
+    <div class="chip">Get In Touch</div>
+    <h2 class="h2" style="margin-top:12px">Let's Plan Your<br><i>Next Adventure</i></h2>
+  </div>
+
+  <div class="ct-wrap">
+    <!-- Info panel -->
+    <div class="ct-info rv d1">
+      <div class="ct-row">
+        <div class="ct-box">📍</div>
+        <div>
+          <div class="ct-lbl">Address</div>
+          <div class="ct-val">EWS-33, TSIIC Colony, Kamala Nagar<br>Soorya Hospital Line, ECIL<br>Hyderabad – 500062</div>
+        </div>
+      </div>
+      <div class="ct-row">
+        <div class="ct-box">📞</div>
+        <div>
+          <div class="ct-lbl">Phone</div>
+          <div class="ct-val">
+            <a href="tel:+919505888004">+91 95058 88004</a><br>
+            <a href="tel:+919505888005">+91 95058 88005</a>
+          </div>
+        </div>
+      </div>
+      <div class="ct-row">
+        <div class="ct-box">✉️</div>
+        <div>
+          <div class="ct-lbl">Gmail / Email</div>
+          <div class="ct-val">
+            <a href="mailto:veeranjaneyulutt@gmail.com">veeranjaneyulutt@gmail.com</a>
+          </div>
+        </div>
+      </div>
+      <div class="ct-row">
+        <div class="ct-box">🕐</div>
+        <div>
+          <div class="ct-lbl">Working Hours</div>
+          <div class="ct-val">Monday – Sunday<br>9:30 AM – 8:30 PM (All 7 Days)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form class="ct-form rv d2" onsubmit="sendForm(event)">
+      <div class="frow">
+        <div class="fg"><label>Full Name</label><input type="text" placeholder="Your name" required/></div>
+        <div class="fg"><label>Phone Number</label><input type="tel" placeholder="+91 XXXXX XXXXX" required/></div>
+      </div>
+      <div class="fg"><label>Email Address</label><input type="email" placeholder="you@example.com"/></div>
+      <div class="fg">
+        <label>Service Required</label>
+        <select>
+          <option value="" disabled selected>Select a service</option>
+          <option>Flight Tickets</option>
+          <option>Hotel Bookings</option>
+          <option>Passport Services</option>
+          <option>Bus Tickets</option>
+          <option>Train Tickets</option>
+          <option>Visa Services</option>
+          <option>Travel Insurance</option>
+          <option>Holiday Package Tours</option>
+          <option>Bus &amp; Car Rentals</option>
+        </select>
+      </div>
+      <div class="fg"><label>Message / Travel Details</label><textarea rows="4" placeholder="Share your travel dates, destination and any special requirements..."></textarea></div>
+      <button type="submit" class="f-btn" id="fbtn">Send Enquiry</button>
+    </form>
+  </div>
+</section>
+
+
+<!-- ════ FOOTER ════ -->
+<footer>
+  <div class="ft-brand">VT<span>T</span></div>
+  <p class="ft-copy">© 2025 VTT Travel Services. All rights reserved.</p>
+  <div class="ft-nav">
+    <a href="#hero">Home</a>
+    <a href="#services">Services</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#office">Our Office</a>
+    <a href="#contact">Contact</a>
+  </div>
+</footer>
+
+
+<script>
+  /* Enquire → auto-select service in form */
+  document.querySelectorAll('.svc-more[data-service]').forEach(link => {
+    link.addEventListener('click', function() {
+      const svc = this.getAttribute('data-service');
+      const sel = document.querySelector('.ct-form select');
+      if (!sel) return;
+      for (let i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].text === svc) { sel.selectedIndex = i; break; }
+      }
+    });
+  });
+
+  /* Navbar scroll */
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 20));
+
+  /* Hamburger */
+  const ham = document.getElementById('ham');
+  const drawer = document.getElementById('drawer');
+  ham.addEventListener('click', () => { ham.classList.toggle('open'); drawer.classList.toggle('open'); });
+  document.querySelectorAll('.dl').forEach(l => l.addEventListener('click', () => { ham.classList.remove('open'); drawer.classList.remove('open'); }));
+
+  /* Scroll reveal */
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); obs.unobserve(e.target); } });
+  }, { threshold: 0.09 });
+  document.querySelectorAll('.rv').forEach(el => obs.observe(el));
+
+  /* Form submit */
+  function sendForm(e) {
+    e.preventDefault();
+    const btn = document.getElementById('fbtn');
+    btn.textContent = '✓  Enquiry Sent!';
+    btn.style.cssText = 'background:#5c2d0a;border-color:#5c2d0a;cursor:default;transform:none';
+    btn.disabled = true;
+    setTimeout(() => { btn.textContent = 'Send Enquiry'; btn.style.cssText = ''; btn.disabled = false; }, 4500);
+  }
+</script>
+</body>
+</html>
